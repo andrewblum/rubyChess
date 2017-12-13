@@ -9,10 +9,19 @@ class Display
   end
 
   def run
+    from = nil
     while true
       system("clear")
       render
-      @cursor.get_input
+      pos = @cursor.get_input
+      if from != nil && pos != nil
+        move(from, pos)
+        from, pos = nil
+      end
+      if pos != nil
+        from = pos
+        pos = nil
+      end
     end
   end
 
@@ -27,21 +36,21 @@ class Display
       j = 0
       while j < 8
         begin
-          current = @board[i, j].type
-          if @board[i, j].side == "black" && i == x && j == y
+          current = @board[[i, j]].type
+          if @board[[i, j]].is_a?(NullPiece)
+            if x == i && j == y
+              temp_row += " | ".red + "#{s} ".yellow
+            else
+              temp_row += " |   ".red
+            end
+          elsif @board[[i, j]].side == "black" && i == x && j == y
             temp_row += " | ".red + current[0].yellow + s
-          elsif @board[i, j].side == "white" && i == x && j == y
+          elsif @board[[i, j]].side == "white" && i == x && j == y
             temp_row += " | ".red + current[0].yellow + s
-          elsif @board[i, j].side == "black"
+          elsif @board[[i, j]].side == "black"
             temp_row += " | ".red + current.blue
-          elsif @board[i, j].side == "white"
+          elsif @board[[i, j]].side == "white"
             temp_row += " | ".red + current.white
-          end
-        rescue
-          if x == i && j == y
-            temp_row += " | ".red + "#{s} ".yellow
-          else
-            temp_row += " |   ".red
           end
         end
         j += 1
@@ -50,6 +59,10 @@ class Display
       i += 1
     end
     puts "-----------------------------------------".red
+  end
+
+  def move(old_pos, new_pos)
+    @board.move_piece(old_pos, new_pos)
   end
 
   b = Board.new

@@ -81,6 +81,7 @@ class Cursor
       return @cursor_pos
     when :left, :right, :up, :down
       update_pos(MOVES[key])
+      return nil
     when :ctrl_c
       Process.exit(0)
     end
@@ -93,6 +94,6 @@ class Cursor
       (y + j) > 7 || (y + j) < 0
       return
     end
-    @cursor_pos = [x + i, y + j]
+    @cursor_pos = [x + j, y + i]
   end
 end
